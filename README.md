@@ -1,14 +1,27 @@
-# 🤖 Hand Gesture Recognition Web App
+# Hand Gesture Recognition Web App
 
-This is a Flask-based real-time hand gesture recognition web app using TensorFlow and MediaPipe.
+A Flask-based AI web application that recognizes hand gestures using a CNN model and webcam input.
 
-## 🔍 Features
-- Live webcam hand gesture detection
-- ASL alphabet recognition
-- Clean UI with prediction display
+## Features
 
-## 🚀 Getting Started
+- Real-time webcam gesture recognition
+- Trained with ASL dataset
+- Fully browser-based
+- Start/Stop camera via keyboard or buttons
+- Predicts labels like 'Thumbs Up', 'Peace', etc.
 
-1. Install requirements:
+## Tech Stack
+
+- Python
+- Flask
+- TensorFlow/Keras
+- OpenCV
+- HTML + JavaScript (for webcam)
+
+## Setup
+
+1. Clone the repo
+2. Create a virtual environment
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
