@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hand Gesture Recognition</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px 0;
+      margin: 0;
+      text-align: center;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      gap: 40px;
+    }
+
+    .left-img {
+      max-width: 350px;
+      border: 4px solid #4CAF50;
+      border-radius: 10px;
+    }
+
+    .video-section {
+      text-align: center;
+    }
+
+    #video-stream {
+      border: 4px solid #4CAF50;
+      border-radius: 10px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    #prediction {
+      font-size: 1.8em;
+      margin: 15px 0;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #start-btn { background-color: #4CAF50; color: white; }
+    #stop-btn  { background-color: #f44336; color: white; }
+  </style>
+</head>
+<body>
+  <h1>🤖 Hand Gesture Recognition</h1>
+
+  <div class="container">
+    <!-- Left: ASL Chart -->
+    <img class="left-img" src="/static/asl_chart.png" alt="ASL Sign Chart">
+
+    <!-- Right: Webcam + prediction -->
+    <div class="video-section">
+      <img id="video-stream" src="/video" alt="Camera Stream"/>
+      <div id="prediction">Prediction: Waiting...</div>
+      <button id="start-btn">Start (Spacebar)</button>
+      <button id="stop-btn">Stop (Q)</button>
+    </div>
+  </div>
+
+  <script>
+    const predictionDiv = document.getElementById('prediction');
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+
+    let streamActive = false;
+
+    async function startCamera() {
+      try {
+        const res = await fetch('/start');
+        const data = await res.json();
+        if (data.status === 'started') {
+          streamActive = true;
+        }
+      } catch (error) {
+        console.error('Error starting camera:', error);
+      }
+    }
+
+    async function stopCamera() {
+      try {
+        await fetch('/stop');
+        streamActive = false;
+      } catch (error) {
+        console.error('Error stopping camera:', error);
+      }
+    }
+
+    async function fetchPrediction() {
+      try {
+        const res = await fetch('/get_prediction');
+        const data = await res.json();
+        predictionDiv.innerText = `Prediction: ${data.label}`;
+      } catch (error) {
+        console.error('Prediction fetch error:', error);
+      }
+    }
+
+    startBtn.addEventListener('click', startCamera);
+    stopBtn.addEventListener('click', stopCamera);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        startCamera();
+      } else if (e.key.toLowerCase() === 'q') {
+        stopCamera();
+      }
+    });
+
+    // Fetch prediction continuously
+    setInterval(fetchPrediction, 500);
+  </script>
+</body>
+</html>
